@@ -1,62 +1,30 @@
-import {useState, useEffect} from 'react'
+import React, {useState, useEffect} from 'react'
+import {typeFilterObject} from './mealwrapper'
 
-
-interface mealCategoriesJSON {
-    categories : [{
-        readonly strCategory : string
-    }]
-}
-
-
-
-const mealCategoriesLink:string = 'https://www.themealdb.com/api/json/v1/1/categories.php'
-
-const generateCategories = async function():Promise<mealCategoriesJSON | undefined> {
-    try{
-        const response = await fetch(mealCategoriesLink, {mode:'cors'})
-        const mealCat = await response.json()
-        return mealCat
-
-    }
-    catch(error){
-        console.log(error)
-        return
-    }
-}
-
-const filterList = async function():Promise<string[] | void>{
-    const categoriesObject = await generateCategories()
-    let mealCategories:string[] = []
-    if(categoriesObject){
-        for(let category of categoriesObject['categories']){
-            mealCategories = [...mealCategories, category.strCategory]
-        }
-        return mealCategories
-    }
-    
-}
-
-const CategoryFilter = function():JSX.Element{
-
-    let [filter, setFilter] = useState(<li></li>)
-
-    const displayCategories = async function(){
-        const filterArray = await filterList()
-    
-        if(filterArray){
-            setFilter(<ul>
-                {filterArray.map(elem => <li>{elem}</li>)}
-                </ul>
-            )
-        }
-
-    }
-
+ 
+const CategoryFilter = function(filterObject:typeFilterObject, setFilterObject:React.Dispatch<React.SetStateAction<typeFilterObject>>):JSX.Element{ 
+    let [filter, setFilter] = useState(<li></li>) 
+    const filterArrayKeys = Object.keys(filterObject)
     useEffect(()=>{
-        displayCategories()
-    },[])
+        const filterItem = function(event:React.MouseEvent){
+            if(event.target === event.currentTarget){
+                return
+            }
+            const target = event.target as HTMLElement
+            setFilterObject(
+                filterObject[target.id] === 'yes' ? Object.assign({},filterObject,{[target.id] : 'no'}) : Object.assign({},filterObject,{[target.id] : 'yes'})
+            ) 
+        }
+        
+        setFilter(
+            <ul onClick={filterItem}> 
+            {filterArrayKeys.map(elem => filterObject[elem] === 'yes' ? <li id={elem}>{elem}</li> : <li id={elem} className='excluded'>{elem}</li>)}
+            </ul>
+        )
+           
+    },[filterArrayKeys,filterObject,setFilterObject])
 
-    return (
+    return ( 
         <div>
             {filter}
         </div>
