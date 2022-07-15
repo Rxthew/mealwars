@@ -61,7 +61,7 @@ const MealWrapper = function(): JSX.Element{
 
     return (
         <div>
-            <CategoryFilter/>
+            <CategoryFilter filterObject={typeFilter} setFilterObject={setTypeFilter}/>
             <MealCard/>
         </div>
     )
