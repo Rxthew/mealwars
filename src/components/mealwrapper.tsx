@@ -11,9 +11,8 @@ interface mealCategoriesJSON {
   }]
 }
 
-interface typeFilterArrays {
-    readonly yes : string[]
-    readonly no : string[]
+export interface typeFilterObject {
+     [index: string] : 'yes' | 'no'
 }
 
 const generateCategories = async function():Promise<mealCategoriesJSON | undefined> {
@@ -43,21 +42,16 @@ const filterList = async function():Promise<string[] | void>{
 
 
 const MealWrapper = function(): JSX.Element{
-    let [typeFilter,setTypeFilter] = useState<typeFilterArrays>({
-        yes: [],
-        no : []
-    })
+    let [typeFilter,setTypeFilter] = useState<typeFilterObject>({})
 
     let populateFilter = async function(){
         const mealTypes = await filterList()
         if(mealTypes){
-            setTypeFilter(
-                {
-                    yes : [...mealTypes],
-                    no : []
-                }
-            )
-
+            let mealTypesObject:typeFilterObject = {}
+            for(let elem of mealTypes){
+                mealTypesObject[`${elem}`] = 'yes'
+            }
+            setTypeFilter(mealTypesObject)
         }              
     }
 
