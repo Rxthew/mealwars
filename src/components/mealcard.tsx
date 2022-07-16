@@ -1,4 +1,5 @@
 import {useState, useEffect} from 'react'
+import { typeFilterObject } from './mealwrapper'
 
 
 const mealDbLink:string = 'https://www.themealdb.com/api/json/v1/1/random.php' 
@@ -16,10 +17,14 @@ interface mealDbJSON {
 }
 
 interface mealData {
-    readonly category: string,
     readonly name: string,
     readonly source : string,
     readonly thumb : string
+
+}
+
+interface cardProps {
+    filterObject : typeFilterObject
 
 }
 
@@ -36,20 +41,23 @@ const generateMeal = async function():Promise<mealDbJSON | undefined> {
     }
 }
 
-const validateMealData = async function():Promise<mealData | undefined> {
+const validateMealData = async function(filterObj:typeFilterObject):Promise<mealData | undefined> {
+    const filterArrayKeys = Object.keys(filterObj).filter(elem => filterObj[elem] === 'no')
     for(let count = 0; count < 30; count++){
         let currentMeal = await generateMeal()
         if(currentMeal){
+            const category = currentMeal.meals[0].strCategory 
+            if(filterArrayKeys.includes(category)){
+                continue
+            }
             let mealObj:mealData =  {
-                category : currentMeal.meals[0].strCategory,
                 name: currentMeal.meals[0].strMeal,
                 source: currentMeal.meals[0].strSource,
                 thumb: currentMeal.meals[0].strMealThumb
             } 
             let mealValues:string[] = Object.values(mealObj)
-            if(mealValues.every(str => typeof str === 'string' && str.length > 0 )){ 
+            if(mealValues.every(str => typeof str === 'string' && str.length > 0 )){  
                 return mealObj
-            
             }
         }
         else{
@@ -59,39 +67,36 @@ const validateMealData = async function():Promise<mealData | undefined> {
     return
 }
 
-const MealCard = function():JSX.Element{
+const MealCard = function(props:cardProps):JSX.Element{ 
     const [meal,setMeal] = useState<JSX.Element>(<div>Loading...</div>)
     
-    const singleRandomMeal  = async function():Promise<void>{
-        const mealData = await validateMealData()
-        if(mealData){
-            setMeal(
-                <div>
-                    <li>{mealData.category}</li>
-                    <li>{mealData.name}</li>
-                    <li>{mealData.source}</li>
-                    <li><img src={mealData.thumb} alt='meal img'/></li>
-                </div>
-            )
-        }
-        else {
-            setMeal(
-                <div>
-                    No meals available at the moment. Please try refreshing your browser window.
-                </div>
-            )
-        }    
-            
-        
-    }
-
     useEffect(() => {
+        const singleRandomMeal  = async function():Promise<void>{
+            const mealData = await validateMealData(props.filterObject)
+            if(mealData){
+                setMeal(
+                    <div>
+                        <li>{mealData.name}</li>
+                        <li>{mealData.source}</li>
+                        <li><img src={mealData.thumb} alt='meal img'/></li>
+                    </div>
+                )
+            }
+            else {
+                setMeal(
+                    <div>
+                        No meals available at the moment. Please try refreshing your browser window.
+                    </div>
+                )
+            }    
+                
+            
+        }
         singleRandomMeal()
         
-    },[])
+    },[props])
 
     return (
-    
     <div>      
     {meal}
     </div>)
