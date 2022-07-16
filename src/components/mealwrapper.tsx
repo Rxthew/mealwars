@@ -44,25 +44,25 @@ const filterList = async function():Promise<string[] | void>{
 const MealWrapper = function(): JSX.Element{
     let [typeFilter,setTypeFilter] = useState<typeFilterObject>({})
 
-    let populateFilter = async function(){
-        const mealTypes = await filterList()
-        if(mealTypes){
-            let mealTypesObject:typeFilterObject = {}
-            for(let elem of mealTypes){
-                mealTypesObject[`${elem}`] = 'yes'
-            }
-            setTypeFilter(mealTypesObject)
-        }              
-    }
-
-    useEffect(()=>{
+    useEffect(()=> {
+        let populateFilter = async function(){
+            const mealTypes = await filterList()
+            if(mealTypes){
+                let mealTypesObject:typeFilterObject = {}
+                for(let elem of mealTypes){
+                    mealTypesObject[`${elem}`] = 'yes'
+                }
+                setTypeFilter(mealTypesObject)
+            }              
+        }
         populateFilter()
-    },[typeFilter])
+    },[])
+    
 
     return (
         <div>
             <CategoryFilter filterObject={typeFilter} setFilterObject={setTypeFilter}/>
-            <MealCard/>
+            <MealCard filterObject={typeFilter}/>
         </div>
     )
 
