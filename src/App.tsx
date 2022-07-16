@@ -1,12 +1,10 @@
-import MealCard from './components/mealcard';
-import CategoryFilter from './components/mealfilter';
+import MealWrapper from './components/mealwrapper';
 import './App.css';
 
 function App() {
   return (
     <div>
-      <CategoryFilter/>
-      <MealCard/>
+      <MealWrapper/>
     </div>
   );
 }
