@@ -25,6 +25,7 @@ interface mealData {
 
 interface cardProps {
     filterObject : typeFilterObject
+    mainMaker(): void
 
 }
 
@@ -40,6 +41,8 @@ const generateMeal = async function():Promise<mealDbJSON | undefined> {
         return
     }
 }
+
+
 
 const validateMealData = async function(filterObj:typeFilterObject):Promise<mealData | undefined> {
     const filterArrayKeys = Object.keys(filterObj).filter(elem => filterObj[elem] === 'no')
@@ -94,14 +97,17 @@ const MealCard = function(props:cardProps):JSX.Element{
         }
         singleRandomMeal()
         
-    },[props])
+    },[props.filterObject])
 
     return (
     <div>      
     {meal}
+    <MainMake reserve={meal} onClick={() => {props.mainMaker()}}/> 
     </div>)
 
 }
+
+
 
 export default MealCard
 
