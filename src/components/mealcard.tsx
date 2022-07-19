@@ -25,8 +25,13 @@ interface mealData {
 
 interface cardProps {
     filterObject : typeFilterObject
-    mainMaker(): void
+    mainMakeFunction(): void
 
+}
+
+interface makerProps {
+    reserve : JSX.Element
+    mainMaker():void
 }
 
 const generateMeal = async function():Promise<mealDbJSON | undefined> {
@@ -70,6 +75,14 @@ const validateMealData = async function(filterObj:typeFilterObject):Promise<meal
     return
 }
 
+const MainMake = function(props:makerProps){
+    return(
+        <button onClick={() => {props.mainMaker()}}></button>
+    )
+}
+
+
+
 const MealCard = function(props:cardProps):JSX.Element{ 
     const [meal,setMeal] = useState<JSX.Element>(<div>Loading...</div>)
     
@@ -102,7 +115,7 @@ const MealCard = function(props:cardProps):JSX.Element{
     return (
     <div>      
     {meal}
-    <MainMake reserve={meal} onClick={() => {props.mainMaker()}}/> 
+    <MainMake reserve={meal} mainMaker={props.mainMakeFunction}/> 
     </div>)
 
 }
