@@ -36,7 +36,7 @@ interface mainCardProps extends cardProps {
 
 interface makerProps {
     readonly reserve : JSX.Element
-    mainMaker():void
+    mainMaker(cardToMake?:JSX.Element):void
 }
 
 const generateMeal = async function():Promise<mealDbJSON | undefined> {
@@ -82,7 +82,7 @@ const validateMealData = async function(filterObj:typeFilterObject):Promise<meal
 
 const MainMake = function(props:makerProps){
     return(
-        <button onClick={() => {props.mainMaker()}}></button>
+        <button onClick={() => {props.mainMaker(props.reserve)}}></button>
     )
 }
 
