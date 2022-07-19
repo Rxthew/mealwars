@@ -24,13 +24,19 @@ interface mealData {
 }
 
 interface cardProps {
-    filterObject : typeFilterObject
+    readonly filterObject : typeFilterObject
     mainMakeFunction(): void
 
 }
 
+interface mainCardProps {
+    cardData : JSX.Element
+    mainRemainFunction(): void
+
+}
+
 interface makerProps {
-    reserve : JSX.Element
+    readonly reserve : JSX.Element
     mainMaker():void
 }
 
@@ -120,7 +126,17 @@ const MealCard = function(props:cardProps):JSX.Element{
 
 }
 
+const MainMealCard = function(props:mainCardProps):JSX.Element{
+    return(
+        <div>
+        {props.cardData}
+        <button onClick={() => props.mainRemainFunction()}></button>
+        </div>
+    )
+
+}
 
 
-export default MealCard
+
+export  {MainMealCard, MealCard}
 
