@@ -25,7 +25,7 @@ interface mealData {
 
 interface cardProps {
     readonly filterObject : typeFilterObject
-    mainHandleFunction(): void
+    mainHandleFunction(cardToMake?:JSX.Element): void
 
 }
 
@@ -143,5 +143,5 @@ const MainMealCard = function(props:mainCardProps):JSX.Element{
 
 
 
-export  {MainMealCard, MealCard, validateMealData}
+export  {MainMealCard, MealCard}
 

@@ -1,4 +1,4 @@
-import MealCard from './mealcard'
+import {MainMealCard, MealCard} from './mealcard'
 import CategoryFilter from './mealfilter'
 import {useState, useEffect} from 'react'
 
@@ -57,12 +57,35 @@ const MealWrapper = function(): JSX.Element{
         }
         populateFilter()
     },[])
+
+    let [mainCard, setMainCard] = useState<JSX.Element>(<MainMealCard cardData={<div></div>} filterObject={typeFilter} mainHandleFunction={() => {}}/>)
+    let [randomCard, setRandomCard] = useState<JSX.Element>(<MealCard filterObject={typeFilter} mainHandleFunction={()=>{}}/>)
+    
+    useEffect(()=>{
+        const newRandom = function(){
+            setRandomCard(
+                <MealCard filterObject={typeFilter} mainHandleFunction={randomCard.props.mainHandleFunction}/>
+            )
+        }
+        setMainCard(<MainMealCard cardData={mainCard.props.cardData} filterObject={typeFilter} mainHandleFunction={newRandom}/>)
+    },[typeFilter,randomCard,mainCard.props.cardData])
+
+    useEffect(()=>{
+        const newMain = function(reserveData:JSX.Element){
+            setMainCard(
+                <MainMealCard cardData={reserveData} filterObject={typeFilter} mainHandleFunction={mainCard.props.mainHandleFunction}/>
+            )
+
+        }
+        setRandomCard(<MealCard filterObject={typeFilter} mainHandleFunction={newMain}/>)
+    },[typeFilter,mainCard])
     
 
     return (
         <div>
             <CategoryFilter filterObject={typeFilter} setFilterObject={setTypeFilter}/>
-            <MealCard filterObject={typeFilter}/>
+            {mainCard}
+            {randomCard}
         </div>
     )
 
