@@ -75,12 +75,22 @@ const MealWrapper = function(): JSX.Element{
     }
 
     const promoteToMain = function(reserveData:JSX.Element){
-        newMain(reserveData)
         newRandom()
+        newMain(reserveData)
     }
   
     let [mainCard, setMainCard] = useState<JSX.Element>(<MainMealCard id={genKey()} cardData={<div id='new'></div>} filterObject={typeFilter} mainHandleFunction={newRandom}/>)
     let [randomCard, setRandomCard] = useState<JSX.Element>(<MealCard id={genKey()} filterObject={typeFilter} mainHandleFunction={promoteToMain}/>)
+    let [score, setScore] = useState<number>(0)
+
+    useEffect(()=>
+    {
+        setScore(s => ++s)
+    },[randomCard])
+
+    useEffect(()=>{
+        setScore(0)
+    },[mainCard])
 
 
     return (
@@ -88,6 +98,7 @@ const MealWrapper = function(): JSX.Element{
             <CategoryFilter filterObject={typeFilter} setFilterObject={setTypeFilter}/>
             {mainCard}
             {randomCard}
+            <span>{score}</span>
         </div>
     )
 
