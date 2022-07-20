@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react'
 import { typeFilterObject } from './mealwrapper'
+import {v4 as genKey} from 'uuid'
 
 
 const mealDbLink:string = 'https://www.themealdb.com/api/json/v1/1/random.php' 
@@ -24,6 +25,7 @@ interface mealData {
 }
 
 interface cardProps {
+    readonly id : string
     readonly filterObject : typeFilterObject
     mainHandleFunction(cardToMake?:JSX.Element): void
 
@@ -96,7 +98,7 @@ const MealCard = function(props:cardProps):JSX.Element{
             const mealData = await validateMealData(props.filterObject)
             if(mealData){
                 setMeal(
-                    <div>
+                    <div id={props.id}>
                         <li>{mealData.name}</li>
                         <li>{mealData.source}</li>
                         <li><img src={mealData.thumb} alt='meal img'/></li>
@@ -105,7 +107,7 @@ const MealCard = function(props:cardProps):JSX.Element{
             }
             else {
                 setMeal(
-                    <div>
+                    <div id={props.id}>
                         No meals available at the moment. Please try refreshing your browser window.
                     </div>
                 )
@@ -115,7 +117,7 @@ const MealCard = function(props:cardProps):JSX.Element{
         }
         singleRandomMeal()
         
-    },[props.filterObject])
+    },[props.filterObject,props.id])
 
     return (
     <div>      
@@ -126,9 +128,9 @@ const MealCard = function(props:cardProps):JSX.Element{
 }
 
 const MainMealCard = function(props:mainCardProps):JSX.Element{
-    if(props.cardData === <div></div>){
+    if(props.cardData.props.id === 'new'){
         return(
-            <MealCard filterObject={props.filterObject} mainHandleFunction={props.mainHandleFunction}/>
+            <MealCard id={genKey()} filterObject={props.filterObject} mainHandleFunction={props.mainHandleFunction}/>
         )
 
     }

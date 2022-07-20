@@ -1,5 +1,6 @@
-import {MainMealCard, MealCard} from './mealcard'
 import CategoryFilter from './mealfilter'
+import {v4 as genKey} from 'uuid'
+import {MainMealCard, MealCard} from './mealcard'
 import {useState, useEffect} from 'react'
 
 
@@ -42,9 +43,11 @@ const filterList = async function():Promise<string[] | void>{
 
 
 const MealWrapper = function(): JSX.Element{
+
     let [typeFilter,setTypeFilter] = useState<typeFilterObject>({})
 
     useEffect(()=> {
+
         let populateFilter = async function(){
             const mealTypes = await filterList()
             if(mealTypes){
@@ -57,29 +60,28 @@ const MealWrapper = function(): JSX.Element{
         }
         populateFilter()
     },[])
-
-    let [mainCard, setMainCard] = useState<JSX.Element>(<MainMealCard cardData={<div></div>} filterObject={typeFilter} mainHandleFunction={() => {}}/>)
-    let [randomCard, setRandomCard] = useState<JSX.Element>(<MealCard filterObject={typeFilter} mainHandleFunction={()=>{}}/>)
     
-    useEffect(()=>{
-        const newRandom = function(){
-            setRandomCard(
-                <MealCard filterObject={typeFilter} mainHandleFunction={randomCard.props.mainHandleFunction}/>
-            )
-        }
-        setMainCard(<MainMealCard cardData={mainCard.props.cardData} filterObject={typeFilter} mainHandleFunction={newRandom}/>)
-    },[typeFilter,randomCard,mainCard.props.cardData])
+    const newRandom = function(){
+        setRandomCard(
+            <MealCard id={genKey()} filterObject={typeFilter} mainHandleFunction={randomCard.props.mainHandleFunction}/>
+        )
+    }
 
-    useEffect(()=>{
-        const newMain = function(reserveData:JSX.Element){
-            setMainCard(
-                <MainMealCard cardData={reserveData} filterObject={typeFilter} mainHandleFunction={mainCard.props.mainHandleFunction}/>
-            )
+    const newMain = function(reserveData:JSX.Element){
+        setMainCard(
+            <MainMealCard id={genKey()} cardData={reserveData} filterObject={typeFilter} mainHandleFunction={mainCard.props.mainHandleFunction}/>
+        )
 
-        }
-        setRandomCard(<MealCard filterObject={typeFilter} mainHandleFunction={newMain}/>)
-    },[typeFilter,mainCard])
-    
+    }
+
+    const promoteToMain = function(reserveData:JSX.Element){
+        newMain(reserveData)
+        newRandom()
+    }
+  
+    let [mainCard, setMainCard] = useState<JSX.Element>(<MainMealCard id={genKey()} cardData={<div id='new'></div>} filterObject={typeFilter} mainHandleFunction={newRandom}/>)
+    let [randomCard, setRandomCard] = useState<JSX.Element>(<MealCard id={genKey()} filterObject={typeFilter} mainHandleFunction={promoteToMain}/>)
+
 
     return (
         <div>
