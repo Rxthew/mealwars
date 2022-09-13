@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {typeFilterObject} from './mealwrapper'
+import {v4 as genKey} from 'uuid'
 
 interface categoryProps {
     filterObject: typeFilterObject, 
@@ -23,7 +24,7 @@ const CategoryFilter = function(props:categoryProps):JSX.Element{
 
         setFilter(
             <ul onClick={filterItem}> 
-            {filterArrayKeys.map(elem => props.filterObject[elem] === 'yes' ? <li id={elem}>{elem}</li> : <li id={elem} className='excluded'>{elem}</li>)}
+            {filterArrayKeys.map(elem => props.filterObject[elem] === 'yes' ? <li key={genKey()} id={elem}>{elem}</li> : <li key={genKey()} id={elem} className='excluded'>{elem}</li>)}
             </ul>
         )
        
