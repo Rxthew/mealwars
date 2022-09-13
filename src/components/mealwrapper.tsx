@@ -53,9 +53,7 @@ const MealWrapper = function(): JSX.Element{
             const mealTypes = await filterList()
             if(mealTypes){
                 let mealTypesObject:typeFilterObject = {}
-                for(let elem of mealTypes){
-                    mealTypesObject[`${elem}`] = 'yes'
-                }
+                mealTypes.map(elem => mealTypesObject[`${elem}`] = 'yes')
                 setTypeFilter(mealTypesObject)
             }              
         }
