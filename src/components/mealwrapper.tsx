@@ -5,6 +5,7 @@ import {useState, useEffect} from 'react'
 
 
 
+
 const mealCategoriesLink:string = 'https://www.themealdb.com/api/json/v1/1/categories.php'
 
 interface mealCategoriesJSON {
@@ -17,16 +18,27 @@ export interface typeFilterObject {
      [index: string] : 'yes' | 'no'
 }
 
+let currentAbort: AbortController | null = null
+
 const generateCategories = async function():Promise<mealCategoriesJSON | undefined> {
   try{
-      const response = await fetch(mealCategoriesLink, {mode:'cors'})
+    const abortControl = new AbortController()
+    currentAbort = abortControl
+    const abortSignal = abortControl.signal  
+      const response = await fetch(mealCategoriesLink, {mode:'cors',signal: abortSignal})
       const mealCat = await response.json()
       return mealCat
 
   }
   catch(error){
-      console.log(error)
-      return
+    let e = error as Error
+    if(e.message === 'The operation was aborted. '){
+        return
+    }
+    else{
+        console.log(error)
+    }
+    return
   }
 }
 
@@ -49,7 +61,7 @@ const MealWrapper = function(): JSX.Element{
 
     useEffect(()=> {
 
-        let populateFilter = async function(){
+        const populateFilter = async function(){
             const mealTypes = await filterList()
             if(mealTypes){
                 let mealTypesObject:typeFilterObject = {}
@@ -58,6 +70,10 @@ const MealWrapper = function(): JSX.Element{
             }              
         }
         populateFilter()
+
+        return () => {
+                currentAbort?.abort()
+        }
     },[])
     
 

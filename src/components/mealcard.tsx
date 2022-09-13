@@ -41,15 +41,26 @@ interface makerProps {
     mainMaker(cardToMake?:JSX.Element):void
 }
 
+let currentAbort: AbortController | null = null
+
 const generateMeal = async function():Promise<mealDbJSON | undefined> {
     try{
-        const response = await fetch(mealDbLink, {mode:'cors'})
+        const abort = new AbortController()
+        currentAbort = abort
+        const abortSignal = abort.signal
+        const response = await fetch(mealDbLink, {mode:'cors', signal: abortSignal})
         const mealData = await response.json()
         return mealData
 
     }
     catch(error){
-        console.log(error)
+        let e = error as Error
+        if(e.message === 'The operation was aborted. '){
+            return
+        }
+        else{
+            console.log(error)
+        }
         return
     }
 }
@@ -116,6 +127,9 @@ const MealCard = function(props:cardProps):JSX.Element{
             
         }
         singleRandomMeal()
+        return () => {
+            currentAbort?.abort()
+        }
         
     },[props.filterObject,props.id])
 
