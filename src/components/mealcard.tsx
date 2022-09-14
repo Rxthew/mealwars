@@ -109,11 +109,11 @@ const MealCard = function(props:cardProps):JSX.Element{
             const mealData = await validateMealData(props.filterObject)
             if(mealData){
                 setMeal(
-                    <div id={props.id}>
+                    <ul id={props.id}>
                         <li>{mealData.name}</li>
                         <li>{mealData.source}</li>
                         <li><img src={mealData.thumb} alt='meal img'/></li>
-                    </div>
+                    </ul>
                 )
             }
             else {

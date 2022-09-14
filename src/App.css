@@ -1,14 +1,35 @@
 @import-normalize;
 
 
-ul {
+#root{
+    display: flex;
+    justify-content: center;
+}
+
+img {
+    min-height: 60vh;
+    max-height: 30rem;
+    max-width: 90vw;
+    object-fit: cover;
+}
+
+menu {
     display: flex;
     gap: 0.24rem;
     flex-wrap: wrap;
+    padding: 0.24rem;
+    border: 1px solid;
+}
+
+li {
     list-style: none;
     cursor: pointer;
-    
 }
+
+
+
+
+
 
 
 
