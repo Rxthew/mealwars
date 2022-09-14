@@ -130,19 +130,21 @@ const MealWrapper = function(): JSX.Element{
 
     if(score > 4){ 
         return(
-            <div>
+            <main>
                 <h2>Looks like you have a winner!</h2>
                 {mainCard.props.cardData}
-            </div>
+            </main>
         )
     }
     return (
-        <div>
-            <CategoryFilter filterObject={typeFilter} setFilterObject={setTypeFilter}/>
+        <main>
+            <section>
+                <CategoryFilter filterObject={typeFilter} setFilterObject={setTypeFilter}/>
+            </section>
             {mainCard}
             {randomCard}
             <span>{score}</span>
-        </div>
+        </main>
     )
 
 }
