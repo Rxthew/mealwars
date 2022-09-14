@@ -1,0 +1,14 @@
+@import-normalize;
+
+
+ul {
+    display: flex;
+    gap: 0.24rem;
+    flex-wrap: wrap;
+    list-style: none;
+    cursor: pointer;
+    
+}
+
+
+
