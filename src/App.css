@@ -1,14 +1,23 @@
 @import-normalize;
 
 
+
+
 #root{
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+
+    
+}
+
+button{
+    all: unset;
+    cursor: pointer;
 }
 
 img {
-    min-height: 60vh;
-    max-height: 30rem;
+    max-height: max(40vh,20rem);
     max-width: 90vw;
     object-fit: cover;
 }

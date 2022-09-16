@@ -139,11 +139,24 @@ const MealWrapper = function(): JSX.Element{
     return (
         <main>
             <section>
+                <div>
+                    <h3>Food Categories:</h3>
+                    <h4>Before you start, tap to choose the food categories that you do not want to apply.</h4>
+                </div>    
                 <CategoryFilter filterObject={typeFilter} setFilterObject={setTypeFilter}/>
             </section>
-            {mainCard}
-            {randomCard}
-            <span>{score}</span>
+            <section>
+                <div>
+                    <h3>Which meal do you prefer?</h3>
+                    <h4>First meal to win five rounds wins!</h4>
+                </div>
+                <div>
+                    <p>Current Score:</p>
+                    <span>{score}</span>
+                </div>        
+                {mainCard}
+                {randomCard}
+            </section>
         </main>
     )
 

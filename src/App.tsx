@@ -3,9 +3,14 @@ import './App.css';
 
 function App() {
   return (
-    <div>
+    <>
+      <header>
+        <h1>
+          Mealwars
+        </h1>
+      </header>
       <MealWrapper/>
-    </div>
+    </>
   );
 }
 
