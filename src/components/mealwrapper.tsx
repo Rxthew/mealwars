@@ -20,6 +20,7 @@ export interface typeFilterObject {
 
 let currentAbort: AbortController | null = null
 
+
 const generateCategories = async function():Promise<mealCategoriesJSON | undefined> {
   try{
     const abortControl = new AbortController()
@@ -77,9 +78,9 @@ const MealWrapper = function(): JSX.Element{
     },[])
     
 
-    const refreshMain = function(reserveData:JSX.Element){
+    const refreshMain = function(reserveData:JSX.Element,newMainName:string){
         if(reserveData){
-            setMainCard( m=> <MainMealCard id={genKey()} cardData={reserveData} filterObject={typeFilter} mainHandleFunction={m.props.mainHandleFunction}/>)  
+            setMainCard( m=> <MainMealCard id={genKey()} cardData={reserveData} filterObject={typeFilter} mainHandleFunction={m.props.mainHandleFunction} mainName={newMainName}/>)  
 
         }
         setTimeout(function(){
@@ -94,16 +95,16 @@ const MealWrapper = function(): JSX.Element{
         )
     }
 
-    const newMain = function(reserveData:JSX.Element){
+    const newMain = function(reserveData:JSX.Element,newMainName:string){
         setMainCard( m =>
-            <MainMealCard id={genKey()} cardData={reserveData} filterObject={typeFilter} mainHandleFunction={m.props.mainHandleFunction}/>
+            <MainMealCard id={genKey()} cardData={reserveData} filterObject={typeFilter} mainHandleFunction={m.props.mainHandleFunction} mainName={newMainName}/>
         )
 
     }
 
-    const promoteToMain = function(reserveData:JSX.Element){
+    const promoteToMain = function(reserveData:JSX.Element, newMainName:string){
         newRandom()
-        newMain(reserveData)
+        newMain(reserveData,newMainName)
     }
     
   
@@ -153,9 +154,15 @@ const MealWrapper = function(): JSX.Element{
                 <div>
                     <p>Current Score:</p>
                     <span>{score}</span>
-                </div>        
-                {mainCard}
+                </div>
+                <div>
+                    <h4>Leader:</h4>
+                    {mainCard}
+                </div>
+                <div>
+                <h4>Challenger:</h4>
                 {randomCard}
+                </div>        
             </section>
         </main>
     )
