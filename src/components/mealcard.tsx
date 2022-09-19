@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react'
+import React, {useState, useEffect} from 'react'
 import { typeFilterObject } from './mealwrapper'
 import {v4 as genKey} from 'uuid'
 
@@ -24,24 +24,29 @@ interface mealData {
 
 }
 
+export interface mainTransition {
+    readonly mainNameSetter: React.Dispatch<React.SetStateAction<string | undefined>>
+    mainHandleFunction(cardToMake?:JSX.Element,reservedName?:string): void
+    currentMainName() : string | undefined
+}
+
 interface cardProps {
     readonly id : string
     readonly filterObject : typeFilterObject
-    mainHandleFunction(cardToMake?:JSX.Element, newMainName?:string): void
-    mainName? : string
+    main: mainTransition
     
-
 }
 
 interface mainCardProps extends cardProps {
     cardData : JSX.Element
+    reservedName : string | undefined
 
 }
 
 interface makerProps {
     readonly reserve : JSX.Element
-    readonly mainName: string 
-    mainMaker(cardToMake?:JSX.Element,newMainName?:string):void
+    mainMaker(cardToMake?:JSX.Element, mainName?:string):void
+    mainName: string
 }
 
 let currentAbort: AbortController | null = null
@@ -70,8 +75,9 @@ const generateMeal = async function():Promise<mealDbJSON | undefined> {
 
 
 
-const validateMealData = async function(filterObj:typeFilterObject,mealName?:string):Promise<mealData | undefined> {
+const validateMealData = async function(filterObj:typeFilterObject,mealName:string | undefined):Promise<mealData | undefined> {
     const filterArrayKeys = Object.keys(filterObj).filter(elem => filterObj[elem] === 'no')
+    console.log(mealName)
     for(let count = 0; count < 30; count++){
         let currentMeal = await generateMeal()
         if(currentMeal){
@@ -86,7 +92,8 @@ const validateMealData = async function(filterObj:typeFilterObject,mealName?:str
             }
             if(mealName === mealObj.name){
                 continue
-            } 
+            }
+            
             let mealValues:string[] = Object.values(mealObj)
             if(mealValues.every(str => typeof str === 'string' && str.length > 0 )){  
                 return mealObj
@@ -109,13 +116,17 @@ const MainMake = function(props:makerProps){
 
 const MealCard = function(props:cardProps):JSX.Element{ 
     let [meal,setMeal] = useState<JSX.Element>(<div>Loading...</div>)
-    let [potentialMain,setPotentialMain] = useState<string>('Loading') 
+    let [reservedName,setReservedName] = useState<string>('Loading...')
     
     useEffect(() => {     
         const singleRandomMeal  = async function():Promise<void>{
-            const mealData = props.mainName ? await validateMealData(props.filterObject, props.mainName) : await validateMealData(props.filterObject)
+            let mainName = props.main.currentMainName()
+            const mealData = await validateMealData(props.filterObject, mainName) 
             if(mealData){
-                setPotentialMain(mealData.name) 
+                if(mainName==='new'){
+                    props.main.mainNameSetter(mealData.name)
+                }
+                setReservedName(mealData.name) 
                 setMeal(
                     <ul id={props.id}>
                         <li>{mealData.name}</li>
@@ -139,27 +150,28 @@ const MealCard = function(props:cardProps):JSX.Element{
             currentAbort?.abort()
         }
         
-    },[props.filterObject,props.id, props.mainName])
+    },[props])
 
     return (
     <div>      
     {meal}
-    {potentialMain === 'Loading' ? false : <MainMake reserve={meal} mainMaker={props.mainHandleFunction} mainName={potentialMain}/> }
+    {<MainMake reserve={meal} mainMaker={props.main.mainHandleFunction} mainName={reservedName}/> }
     </div>)
 
 }
 
-const MainMealCard = function(props:mainCardProps):JSX.Element{
-    if(props.cardData.props.id === 'new'){
+const MainMealCard = function(props:mainCardProps):JSX.Element{ 
+    if(props.cardData.props.id === 'new'){  
         return(
-            <MealCard id={genKey()} filterObject={props.filterObject} mainHandleFunction={props.mainHandleFunction} mainName={props.mainName}/>
+            <MealCard id={genKey()} filterObject={props.filterObject} main={Object.assign({},props.main,{currentMainName: () => 'new'})}/>
         )
 
     }
-    return(
-        <div>
-        {props.cardData}
-        <button onClick={() => props.mainHandleFunction()}></button>
+    console.log(props)
+    return( 
+        <div> 
+            {props.cardData}
+            <button onClick={() => props.main.mainHandleFunction(undefined,props.reservedName)}>Pick {props.reservedName}</button>
         </div>
     )
 

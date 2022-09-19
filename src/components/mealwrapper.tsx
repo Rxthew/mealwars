@@ -1,9 +1,7 @@
 import CategoryFilter from './mealfilter'
 import {v4 as genKey} from 'uuid'
-import {MainMealCard, MealCard} from './mealcard'
+import {MainMealCard, mainTransition, MealCard} from './mealcard'
 import {useState, useEffect, useRef} from 'react'
-
-
 
 
 const mealCategoriesLink:string = 'https://www.themealdb.com/api/json/v1/1/categories.php'
@@ -55,11 +53,12 @@ const filterList = async function():Promise<string[] | void>{
   
 }
 
-
 const MealWrapper = function(): JSX.Element{
 
     let [typeFilter,setTypeFilter] = useState<typeFilterObject>({})
     let latestFilter: {current: typeFilterObject | undefined}= useRef()
+    let [mainName, setMainName] = useState<string | undefined>()
+    let latestName = useRef(mainName)
 
     useEffect(()=> {
 
@@ -78,12 +77,18 @@ const MealWrapper = function(): JSX.Element{
                 currentAbort?.abort()
         }
     },[])
+
+    useEffect(() =>{
+        latestName.current = mainName
+        console.log(latestName.current)
+    },[mainName])
     
 
-    const refreshMain = function(reserveData:JSX.Element,newMainName:string){
+    const refreshMain = function(reserveData:JSX.Element,reservedString:string){
         let currentFilter = latestFilter.current ? latestFilter.current : typeFilter
         if(reserveData){
-            setMainCard( m=> <MainMealCard id={genKey()} cardData={reserveData} filterObject={currentFilter} mainHandleFunction={m.props.mainHandleFunction} mainName={newMainName}/>)  
+            setMainCard( m => <MainMealCard id={genKey()} cardData={reserveData} reservedName={reservedString} filterObject={currentFilter} main={Object.assign(m.props.main,{currentMainName: latestName.current})}/>
+            )  
 
         }
         setTimeout(function(){
@@ -95,43 +100,52 @@ const MealWrapper = function(): JSX.Element{
     const newRandom = function(){
         let currentFilter = latestFilter.current ? latestFilter.current : typeFilter
         setRandomCard( r =>
-            <MealCard id={genKey()} filterObject={currentFilter} mainHandleFunction={r.props.mainHandleFunction}/>
+            <MealCard id={genKey()} filterObject={currentFilter} main={r.props.main}/>
         )
     }
 
-    const newMain = function(reserveData:JSX.Element,newMainName:string){
+    const newMain = function(reserveData:JSX.Element,reservedName:string){
         let currentFilter = latestFilter.current ? latestFilter.current : typeFilter
         setMainCard( m =>
-            <MainMealCard id={genKey()} cardData={reserveData} filterObject={currentFilter} mainHandleFunction={m.props.mainHandleFunction} mainName={newMainName}/>
+            <MainMealCard id={genKey()} cardData={reserveData} reservedName={reservedName} filterObject={currentFilter} main={m.props.main}/>
         )
 
     }
 
-    const promoteToMain = function(reserveData:JSX.Element, newMainName:string){
+    const promoteToMain = function(reserveData:JSX.Element,reservedName:string){
+        setMainName(reservedName)
         newRandom()
-        newMain(reserveData,newMainName)
+        newMain(reserveData,reservedName)
     }
+
+    const templateMain = {
+        currentMainName: () =>latestName.current,
+        mainNameSetter: setMainName
+
+    }
+    const refreshBox:mainTransition = Object.assign({},templateMain,{mainHandleFunction : refreshMain})
+    const promoteBox:mainTransition = Object.assign({},templateMain,{mainHandleFunction : promoteToMain})
     
   
-    let [mainCard, setMainCard] = useState<JSX.Element>(<MainMealCard id={genKey()} cardData={<div id='new'></div>} filterObject={typeFilter} mainHandleFunction={refreshMain}/>)
-    let [randomCard, setRandomCard] = useState<JSX.Element>(<MealCard id={genKey()} filterObject={typeFilter} mainHandleFunction={promoteToMain}/>)
+    let [mainCard, setMainCard] = useState<JSX.Element>(<MainMealCard id={genKey()} reservedName={mainName} cardData={<div id='new'></div>} filterObject={typeFilter} main={refreshBox}/>)
+    let [randomCard, setRandomCard] = useState<JSX.Element>(<MealCard id={genKey()} filterObject={typeFilter} main={promoteBox}/>)
     let [score, setScore] = useState<number>(0)
 
     useEffect(()=>
-    {
+    {   
         setScore(s => ++s)
     },[randomCard])
 
     useEffect(()=>{
-        setScore(0)
+        setScore(1)
     },[mainCard])
 
     useEffect(()=>{
        latestFilter.current = typeFilter
         setRandomCard( r =>
-            <MealCard id={genKey()} filterObject={typeFilter} mainHandleFunction={r.props.mainHandleFunction}/>
+            <MealCard id={genKey()} filterObject={typeFilter} main={r.props.main}/>
         )
-        setMainCard(m => <MainMealCard id={genKey()} cardData={<div id='new'></div>} filterObject={typeFilter} mainHandleFunction={m.props.mainHandleFunction}/>)
+        setMainCard(m => <MainMealCard id={genKey()} cardData={<div id='new'></div>} reservedName={m.props.reservedName} filterObject={typeFilter} main={m.props.main}/>)
 
     },[typeFilter])
 
