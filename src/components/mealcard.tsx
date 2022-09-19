@@ -116,6 +116,7 @@ const MainMake = function(props:makerProps){
 const MealCard = function(props:cardProps):JSX.Element{ 
     let [meal,setMeal] = useState<JSX.Element>(<div>Loading...</div>)
     let [reservedName,setReservedName] = useState<string>('Loading...')
+    let [isMealFetched, setIsMealFetched] = useState<boolean>(false)
     
     useEffect(() => {     
         const singleRandomMeal  = async function():Promise<void>{
@@ -125,7 +126,8 @@ const MealCard = function(props:cardProps):JSX.Element{
                 if(mainName==='new'){
                     props.main.mainNameSetter(mealData.name)
                 }
-                setReservedName(mealData.name) 
+                setReservedName(mealData.name)
+                setIsMealFetched(true) 
                 setMeal(
                     <ul id={props.id}>
                         <li>{mealData.name}</li>
@@ -154,7 +156,7 @@ const MealCard = function(props:cardProps):JSX.Element{
     return (
     <div>      
     {meal}
-    {<MainMake reserve={meal} mainMaker={props.main.mainHandleFunction} mainName={reservedName}/> }
+    {isMealFetched ? <MainMake reserve={meal} mainMaker={props.main.mainHandleFunction} mainName={reservedName}/> : false }
     </div>)
 
 }
