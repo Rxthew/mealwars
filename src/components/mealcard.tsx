@@ -77,7 +77,6 @@ const generateMeal = async function():Promise<mealDbJSON | undefined> {
 
 const validateMealData = async function(filterObj:typeFilterObject,mealName:string | undefined):Promise<mealData | undefined> {
     const filterArrayKeys = Object.keys(filterObj).filter(elem => filterObj[elem] === 'no')
-    console.log(mealName)
     for(let count = 0; count < 30; count++){
         let currentMeal = await generateMeal()
         if(currentMeal){
@@ -167,7 +166,6 @@ const MainMealCard = function(props:mainCardProps):JSX.Element{
         )
 
     }
-    console.log(props)
     return( 
         <div> 
             {props.cardData}

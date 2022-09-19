@@ -80,7 +80,6 @@ const MealWrapper = function(): JSX.Element{
 
     useEffect(() =>{
         latestName.current = mainName
-        console.log(latestName.current)
     },[mainName])
     
 
@@ -137,7 +136,7 @@ const MealWrapper = function(): JSX.Element{
     },[randomCard])
 
     useEffect(()=>{
-        setScore(1)
+        setScore(0)
     },[mainCard])
 
     useEffect(()=>{
