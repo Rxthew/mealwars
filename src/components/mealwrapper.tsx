@@ -139,7 +139,20 @@ const MealWrapper = function(): JSX.Element{
     },[randomCard])
 
     useEffect(()=>{
-        setScore(0)
+        if(mainCard.props.cardData.props.id === 'new'){
+            setScore(0)
+        }
+        else{
+            setScore((s) => s === -1 ? 0 : 1)
+        }
+        
+        return () => {
+           if(mainCard.props.cardData.props.id === 'new'){
+            setScore(-1)
+           }
+        }
+           
+        
     },[mainCard])
 
     useEffect(()=>{
