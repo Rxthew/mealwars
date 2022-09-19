@@ -142,6 +142,7 @@ const MealCard = function(props:cardProps):JSX.Element{
                         No meals available at the moment. Please try refreshing your browser window.
                     </div>
                 )
+                setIsMealFetched(false)
             }    
                 
             
