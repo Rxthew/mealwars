@@ -28,6 +28,7 @@ export interface mainTransition {
     readonly mainNameSetter: React.Dispatch<React.SetStateAction<string | undefined>>
     mainHandleFunction(cardToMake?:JSX.Element,reservedName?:string): void
     currentMainName() : string | undefined
+    harmoniseNullStates(nullState:JSX.Element) : void
 }
 
 interface cardProps {
@@ -137,12 +138,12 @@ const MealCard = function(props:cardProps):JSX.Element{
                 )
             }
             else {
-                setMeal(
-                    <div id={props.id}>
-                        No meals available at the moment. Please try refreshing your browser window.
-                    </div>
-                )
+                const nullState = <div id={props.id}>
+                No meals available at the moment. Please try refreshing your browser window.
+                </div>
+                setMeal(nullState)
                 setIsMealFetched(false)
+                props.main.harmoniseNullStates(nullState)
             }    
                 
             

@@ -53,6 +53,7 @@ const filterList = async function():Promise<string[] | void>{
   
 }
 
+
 const MealWrapper = function(): JSX.Element{
 
     let [typeFilter,setTypeFilter] = useState<typeFilterObject>({})
@@ -120,9 +121,19 @@ const MealWrapper = function(): JSX.Element{
         
     }
 
+    const harmoniseNullStates = function(nullState:JSX.Element){
+        setRandomCard(nullState)
+        setMainCard(nullState)
+        setTimeout(() => {
+           setScore(0)
+       },1000)
+    }
+
+
     const templateMain = {
         currentMainName: () =>latestName.current,
-        mainNameSetter: setMainName
+        mainNameSetter: setMainName,
+        harmoniseNullStates: harmoniseNullStates
 
     }
     const refreshBox:mainTransition = Object.assign({},templateMain,{mainHandleFunction : refreshMain})
