@@ -113,8 +113,11 @@ const MealWrapper = function(): JSX.Element{
 
     const promoteToMain = function(reserveData:JSX.Element,reservedName:string){
         setMainName(reservedName)
-        newRandom()
-        newMain(reserveData,reservedName)
+        setTimeout(()=>{
+            newRandom()
+            newMain(reserveData,reservedName)
+        },1000)
+        
     }
 
     const templateMain = {
