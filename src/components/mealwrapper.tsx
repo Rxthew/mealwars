@@ -1,7 +1,8 @@
 import CategoryFilter from './mealfilter'
 import {v4 as genKey} from 'uuid'
-import {MainMealCard, mainTransition, MealCard} from './mealcard'
+import {fetchOptions, MainMealCard, mainTransition, MealCard} from './mealcard'
 import {useState, useEffect, useRef} from 'react'
+
 
 
 const mealCategoriesLink:string = 'https://www.themealdb.com/api/json/v1/1/categories.php'
@@ -17,6 +18,7 @@ export interface typeFilterObject {
 }
 
 let currentAbort: AbortController | null = null
+
 
 
 const generateCategories = async function():Promise<mealCategoriesJSON | undefined> {
@@ -60,7 +62,9 @@ const MealWrapper = function(): JSX.Element{
     let latestFilter: {current: typeFilterObject | undefined}= useRef()
     let [mainName, setMainName] = useState<string | undefined>()
     let latestName = useRef(mainName)
-
+    let [isMealFetched,setIsMealFetched] = useState<boolean>(true)
+    
+    
     useEffect(()=> {
 
         const populateFilter = async function(){
@@ -82,12 +86,12 @@ const MealWrapper = function(): JSX.Element{
     useEffect(() =>{
         latestName.current = mainName
     },[mainName])
-    
 
+    
     const refreshMain = function(reserveData:JSX.Element,reservedString:string){
         let currentFilter = latestFilter.current ? latestFilter.current : typeFilter
         if(reserveData){
-            setMainCard( m => <MainMealCard id={genKey()} cardData={reserveData} reservedName={reservedString} filterObject={currentFilter} main={Object.assign(m.props.main,{currentMainName: latestName.current})}/>
+            setMainCard( m => <MainMealCard id={genKey()} cardData={reserveData} fetchers={m.props.fetchers}  reservedName={reservedString} filterObject={currentFilter} main={Object.assign(m.props.main,{currentMainName: latestName.current})}/>
             )  
 
         }
@@ -100,14 +104,14 @@ const MealWrapper = function(): JSX.Element{
     const newRandom = function(){
         let currentFilter = latestFilter.current ? latestFilter.current : typeFilter
         setRandomCard( r =>
-            <MealCard id={genKey()} filterObject={currentFilter} main={r.props.main}/>
+            <MealCard id={genKey()} filterObject={currentFilter} fetchers={r.props.fetchers}  main={r.props.main}/>
         )
     }
 
     const newMain = function(reserveData:JSX.Element,reservedName:string){
         let currentFilter = latestFilter.current ? latestFilter.current : typeFilter
         setMainCard( m =>
-            <MainMealCard id={genKey()} cardData={reserveData} reservedName={reservedName} filterObject={currentFilter} main={m.props.main}/>
+            <MainMealCard id={genKey()} fetchers={m.props.fetchers}  cardData={reserveData} reservedName={reservedName} filterObject={currentFilter} main={m.props.main}/>
         )
 
     }
@@ -121,27 +125,22 @@ const MealWrapper = function(): JSX.Element{
         
     }
 
-    const harmoniseNullStates = function(nullState:JSX.Element){
-        setRandomCard(nullState)
-        setMainCard(nullState)
-        setTimeout(() => {
-           setScore(0)
-       },1000)
+    const fetchers:fetchOptions = {
+        fetchState :  isMealFetched,
+        fetchSetter : setIsMealFetched
     }
-
 
     const templateMain = {
         currentMainName: () =>latestName.current,
         mainNameSetter: setMainName,
-        harmoniseNullStates: harmoniseNullStates
 
     }
     const refreshBox:mainTransition = Object.assign({},templateMain,{mainHandleFunction : refreshMain})
     const promoteBox:mainTransition = Object.assign({},templateMain,{mainHandleFunction : promoteToMain})
     
   
-    let [mainCard, setMainCard] = useState<JSX.Element>(<MainMealCard id={genKey()} reservedName={mainName} cardData={<div id='new'></div>} filterObject={typeFilter} main={refreshBox}/>)
-    let [randomCard, setRandomCard] = useState<JSX.Element>(<MealCard id={genKey()} filterObject={typeFilter} main={promoteBox}/>)
+    let [mainCard, setMainCard] = useState<JSX.Element>(<MainMealCard fetchers={fetchers} id={genKey()} reservedName={mainName} cardData={<div id='new'></div>} filterObject={typeFilter} main={refreshBox}/>)
+    let [randomCard, setRandomCard] = useState<JSX.Element>(<MealCard fetchers={fetchers}  id={genKey()} filterObject={typeFilter} main={promoteBox}/>)
     let [score, setScore] = useState<number>(0)
 
     useEffect(()=>
@@ -167,13 +166,41 @@ const MealWrapper = function(): JSX.Element{
     },[mainCard])
 
     useEffect(()=>{
+       if(latestFilter.current === typeFilter){
+            return
+       }   
        latestFilter.current = typeFilter
-        setRandomCard( r =>
-            <MealCard id={genKey()} filterObject={typeFilter} main={r.props.main}/>
-        )
-        setMainCard(m => <MainMealCard id={genKey()} cardData={<div id='new'></div>} reservedName={m.props.reservedName} filterObject={typeFilter} main={m.props.main}/>)
+       let filterValues = Object.values(typeFilter).filter(elem => elem !== 'no')
+       if(filterValues.length > 0 && !isMealFetched){
+            setIsMealFetched(true)
+            setRandomCard( r =>
+                <MealCard id={genKey()} fetchers={Object.assign(r.props.fetchers, {fetchState : true})} filterObject={typeFilter} main={r.props.main}/>
+            )
+            setMainCard(m => <MainMealCard id={genKey()} fetchers={Object.assign(m.props.fetchers,{fetchState : true})} cardData={<div id='new'></div>} reservedName={m.props.reservedName} filterObject={typeFilter} main={m.props.main}/>)
 
-    },[typeFilter])
+       }
+       else {
+            setRandomCard( r =>
+                <MealCard id={genKey()} fetchers={r.props.fetchers} filterObject={typeFilter} main={r.props.main}/>
+            )
+            setMainCard(m => <MainMealCard id={genKey()} fetchers={m.props.fetchers} cardData={<div id='new'></div>} reservedName={m.props.reservedName} filterObject={typeFilter} main={m.props.main}/>)
+
+        }
+        
+
+    },[typeFilter,isMealFetched])
+   
+    useEffect(()=>{ 
+        if(!isMealFetched ){
+            setMainCard(m => <MainMealCard id={genKey()} fetchers={Object.assign(m.props.fetchers,{fetchState : isMealFetched})} cardData={m.props.cardData} reservedName={m.props.reservedName} filterObject={m.props.filterObject} main={m.props.main}/>)
+            setRandomCard(r => <MealCard id={genKey()} fetchers={Object.assign(r.props.fetchers,{fetchState : isMealFetched})} filterObject={r.props.filterObject} main={r.props.main}/>)
+        }   
+
+    },[isMealFetched])
+
+   
+     
+   
 
     if(score > 4){ 
         return(
