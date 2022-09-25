@@ -24,17 +24,24 @@ interface mealData {
 
 }
 
+export interface fetchOptions {
+    fetchState: boolean
+    readonly fetchSetter: React.Dispatch<React.SetStateAction<boolean>>
+}
+
 export interface mainTransition {
     readonly mainNameSetter: React.Dispatch<React.SetStateAction<string | undefined>>
     mainHandleFunction(cardToMake?:JSX.Element,reservedName?:string): void
     currentMainName() : string | undefined
-    harmoniseNullStates(nullState:JSX.Element) : void
+    
 }
 
 interface cardProps {
     readonly id : string
     readonly filterObject : typeFilterObject
     main: mainTransition
+    fetchers : fetchOptions
+    
     
 }
 
@@ -52,7 +59,7 @@ interface makerProps {
 
 let currentAbort: AbortController | null = null
 
-const generateMeal = async function():Promise<mealDbJSON | undefined> {
+const generateMeal = async function():Promise<mealDbJSON | undefined  > {
     try{
         const abort = new AbortController()
         currentAbort = abort
@@ -76,9 +83,12 @@ const generateMeal = async function():Promise<mealDbJSON | undefined> {
 
 
 
-const validateMealData = async function(filterObj:typeFilterObject,mealName:string | undefined):Promise<mealData | undefined> {
+const validateMealData = async function(filterObj:typeFilterObject,mealName:string | undefined):Promise<mealData | undefined | 'meal unavailable'> {
     const filterArrayKeys = Object.keys(filterObj).filter(elem => filterObj[elem] === 'no')
-    for(let count = 0; count < 30; count++){
+    for(let count = 0; count < 31; count++){
+        if(count === 30){
+            return 'meal unavailable'
+        }
         let currentMeal = await generateMeal()
         if(currentMeal){
             const category = currentMeal.meals[0].strCategory 
@@ -103,7 +113,7 @@ const validateMealData = async function(filterObj:typeFilterObject,mealName:stri
             break
         }
     }
-    return
+    return 
 }
 
 const MainMake = function(props:makerProps){
@@ -117,57 +127,68 @@ const MainMake = function(props:makerProps){
 const MealCard = function(props:cardProps):JSX.Element{ 
     let [meal,setMeal] = useState<JSX.Element>(<div>Loading...</div>)
     let [reservedName,setReservedName] = useState<string>('Loading...')
-    let [isMealFetched, setIsMealFetched] = useState<boolean>(false)
+    const nullState = <div id={props.id}>
+    No meals available at the moment. Please try refreshing your browser window.
+    </div>
     
     useEffect(() => {     
         const singleRandomMeal  = async function():Promise<void>{
-            let mainName = props.main.currentMainName()
-            const mealData = await validateMealData(props.filterObject, mainName) 
-            if(mealData){
-                if(mainName==='new'){
+            if(props.fetchers.fetchState){
+                let mainName = props.main.currentMainName()
+                const mealData = await validateMealData(props.filterObject, mainName)
+                if(mealData === 'meal unavailable'){
+                    props.fetchers.fetchSetter(false)
+                } 
+                else if(mealData){
+                    if(mainName==='new'){
                     props.main.mainNameSetter(mealData.name)
                 }
                 setReservedName(mealData.name)
-                setIsMealFetched(true) 
                 setMeal(
                     <ul id={props.id}>
                         <li>{mealData.name}</li>
-                        <li>{mealData.source}</li>
+                        <li>
+                            <a href={mealData.source}>Source</a>
+                        </li>
                         <li><img src={mealData.thumb} alt='meal img'/></li>
                     </ul>
                 )
             }
-            else {
-                const nullState = <div id={props.id}>
-                No meals available at the moment. Please try refreshing your browser window.
-                </div>
-                setMeal(nullState)
-                setIsMealFetched(false)
-                props.main.harmoniseNullStates(nullState)
-            }    
-                
+
+            }
+                  
             
         }
-        singleRandomMeal()
+            singleRandomMeal()
+            
+        
+        
         return () => {
             currentAbort?.abort()
         }
         
     },[props])
 
-    return (
-    <div>      
-    {meal}
-    {isMealFetched ? <MainMake reserve={meal} mainMaker={props.main.mainHandleFunction} mainName={reservedName}/> : false }
-    </div>)
+
+    if(props.fetchers.fetchState){
+        return (
+            <div>      
+            {meal}
+            <MainMake reserve={meal} mainMaker={props.main.mainHandleFunction} mainName={reservedName}/> 
+            </div>)    
+      }
+      else {
+        return nullState
+      }
+    
 
 }
 
 const MainMealCard = function(props:mainCardProps):JSX.Element{ 
     if(props.cardData.props.id === 'new'){  
         return(
-            <MealCard id={genKey()} filterObject={props.filterObject} main={Object.assign({},props.main,{currentMainName: () => 'new'})}/>
-        )
+            <MealCard id={genKey()} fetchers={props.fetchers} filterObject={props.filterObject} main={Object.assign({},props.main,{currentMainName: () => 'new'})}/>
+        ) 
 
     }
     return( 
