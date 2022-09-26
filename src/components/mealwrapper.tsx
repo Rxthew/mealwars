@@ -63,42 +63,10 @@ const MealWrapper = function(): JSX.Element{
     let [mainName, setMainName] = useState<string | undefined>()
     let latestName = useRef(mainName)
     let [isMealFetched,setIsMealFetched] = useState<boolean>(true)
-    
-    
-    useEffect(()=> {
+    let [warsContent, setWarsContent] = useState<boolean>(false) 
 
-        const populateFilter = async function(){
-            const mealTypes = await filterList()
-            if(mealTypes){
-                let mealTypesObject:typeFilterObject = {}
-                mealTypes.map(elem => mealTypesObject[`${elem}`] = 'yes')
-                setTypeFilter(mealTypesObject)
-                latestFilter.current = mealTypesObject
-            }              
-        }
-        populateFilter()
-
-        return () => {
-                currentAbort?.abort()
-        }
-    },[])
-
-    useEffect(() =>{
-        latestName.current = mainName
-    },[mainName])
-
-    
-    const refreshMain = function(reserveData:JSX.Element,reservedString:string){
-        let currentFilter = latestFilter.current ? latestFilter.current : typeFilter
-        if(reserveData){
-            setMainCard( m => <MainMealCard id={genKey()} cardData={reserveData} fetchers={m.props.fetchers}  reservedName={reservedString} filterObject={currentFilter} main={Object.assign(m.props.main,{currentMainName: latestName.current})}/>
-            )  
-
-        }
-        setTimeout(function(){
-            newRandom()
-        },1000)
-        
+    const revealGame = function(){
+        setWarsContent(true)
     }
     
     const newRandom = function(){
@@ -125,6 +93,19 @@ const MealWrapper = function(): JSX.Element{
         
     }
 
+    const refreshMain = function(reserveData:JSX.Element,reservedString:string){
+        let currentFilter = latestFilter.current ? latestFilter.current : typeFilter
+        if(reserveData){
+            setMainCard( m => <MainMealCard id={genKey()} cardData={reserveData} fetchers={m.props.fetchers}  reservedName={reservedString} filterObject={currentFilter} main={Object.assign(m.props.main,{currentMainName: latestName.current})}/>
+            )  
+
+        }
+        setTimeout(function(){
+            newRandom()
+        },1000)
+        
+    }
+
     const fetchers:fetchOptions = {
         fetchState :  isMealFetched,
         fetchSetter : setIsMealFetched
@@ -138,10 +119,32 @@ const MealWrapper = function(): JSX.Element{
     const refreshBox:mainTransition = Object.assign({},templateMain,{mainHandleFunction : refreshMain})
     const promoteBox:mainTransition = Object.assign({},templateMain,{mainHandleFunction : promoteToMain})
     
-  
     let [mainCard, setMainCard] = useState<JSX.Element>(<MainMealCard fetchers={fetchers} id={genKey()} reservedName={mainName} cardData={<div id='new'></div>} filterObject={typeFilter} main={refreshBox}/>)
     let [randomCard, setRandomCard] = useState<JSX.Element>(<MealCard fetchers={fetchers}  id={genKey()} filterObject={typeFilter} main={promoteBox}/>)
     let [score, setScore] = useState<number>(0)
+    
+
+    useEffect(()=> {
+
+        const populateFilter = async function(){
+            const mealTypes = await filterList()
+            if(mealTypes){
+                let mealTypesObject:typeFilterObject = {}
+                mealTypes.map(elem => mealTypesObject[`${elem}`] = 'yes')
+                setTypeFilter(mealTypesObject)
+                latestFilter.current = mealTypesObject
+            }              
+        }
+        populateFilter()
+
+        return () => {
+                currentAbort?.abort()
+        }
+    },[])
+
+    useEffect(() =>{
+        latestName.current = mainName
+    },[mainName])
 
     useEffect(()=>
     {   
@@ -166,9 +169,9 @@ const MealWrapper = function(): JSX.Element{
     },[mainCard])
 
     useEffect(()=>{
-       if(latestFilter.current === typeFilter){
+       if(latestFilter.current === typeFilter ){
             return
-       }   
+       }
        latestFilter.current = typeFilter
        let filterValues = Object.values(typeFilter).filter(elem => elem !== 'no')
        if(filterValues.length > 0 && !isMealFetched){
@@ -197,10 +200,7 @@ const MealWrapper = function(): JSX.Element{
         }   
 
     },[isMealFetched])
-
-   
-     
-   
+                
 
     if(score > 4){ 
         return(
@@ -215,18 +215,21 @@ const MealWrapper = function(): JSX.Element{
             <section>
                 <div>
                     <h3>Food Categories:</h3>
-                    <h4>Before you start, tap to choose the food categories that you do not want to apply.</h4>
+                    <h4>Tap on the categories to filter the types of meals you want.</h4>
                 </div>    
                 <CategoryFilter filterObject={typeFilter} setFilterObject={setTypeFilter}/>
+                {warsContent ? false : <button onClick={revealGame}>Done</button>}
             </section>
+            {warsContent ? 
             <section>
                 <div>
                     <h3>Which meal do you prefer?</h3>
                     <h4>First meal to win five rounds wins!</h4>
                 </div>
                 <div>
-                    <p>Current Score:</p>
-                    <span>{score}</span>
+                    <p>
+                    Current Score: {score}
+                    </p>
                 </div>
                 <div>
                     <h4>Leader:</h4>
@@ -236,7 +239,7 @@ const MealWrapper = function(): JSX.Element{
                 <h4>Challenger:</h4>
                 {randomCard}
                 </div>        
-            </section>
+            </section> : false}      
         </main>
     )
 
