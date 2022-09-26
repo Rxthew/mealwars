@@ -146,11 +146,10 @@ const MealCard = function(props:cardProps):JSX.Element{
                 setReservedName(mealData.name)
                 setMeal(
                     <ul id={props.id}>
-                        <li>{mealData.name}</li>
+                        <li><img src={mealData.thumb} alt='meal img'/></li>
                         <li>
                             <a href={mealData.source}>Source</a>
                         </li>
-                        <li><img src={mealData.thumb} alt='meal img'/></li>
                     </ul>
                 )
             }
