@@ -185,18 +185,29 @@ const MealCard = function(props:cardProps):JSX.Element{
 }
 
 const MainMealCard = function(props:mainCardProps):JSX.Element{ 
+    const nullStateMain = <div id={props.id}>
+    No meals available at the moment. Please try refreshing your browser window.
+    </div>
     if(props.cardData.props.id === 'new'){  
         return(
             <MealCard id={genKey()} fetchers={props.fetchers} filterObject={props.filterObject} main={Object.assign({},props.main,{currentMainName: () => 'new'})}/>
         ) 
 
     }
-    return( 
-        <div> 
-            {props.cardData}
-            <button onClick={() => props.main.mainHandleFunction(undefined,props.reservedName)}>Pick {props.reservedName}</button>
-        </div>
-    )
+    if(props.fetchers.fetchState){
+        return(   
+            <div>
+                {props.cardData}
+                <button onClick={() => props.main.mainHandleFunction(undefined,props.reservedName)}>Pick {props.reservedName}</button>
+            </div> 
+        )
+    }
+    else{
+        return nullStateMain
+
+
+    }
+    
 
 }
 
