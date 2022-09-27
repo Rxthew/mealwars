@@ -85,6 +85,18 @@ section > button {
     
 }
 
+@media (min-width: 992px){
+    div.meals {
+        display:flex;
+    }
+
+    div > button {
+        display: block;
+        margin: 0.75rem auto;
+    }
+
+}
+
 
 
 

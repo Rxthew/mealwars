@@ -223,13 +223,15 @@ const MealWrapper = function(): JSX.Element{
                     {score}
                     </p>
                 </div>
-                <div>
-                    <h4>Leader:</h4>
-                    {mainCard}
-                </div>
-                <div>
-                <h4>Challenger:</h4>
-                {randomCard}
+                <div className='meals'>
+                    <div>
+                        <h4>Leader:</h4>
+                        {mainCard}
+                    </div>
+                    <div>
+                        <h4>Challenger:</h4>
+                        {randomCard}
+                    </div>
                 </div>        
             </section> : false}
             <section>
