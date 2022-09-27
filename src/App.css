@@ -1,38 +1,87 @@
 @import-normalize;
 
 
-
-
-#root{
+#root {
+    align-items: center;
     display: flex;
     flex-direction: column;
-    align-items: center;
-
+    margin-left: 1rem;
+    margin-right: 1rem;
     
 }
 
-button{
-    all: unset;
-    cursor: pointer;
+div.score {
+    display: flex;
+    justify-content: center;
+    
+
 }
 
+p.score{
+    background-color: #E1999F;
+    border-radius: 5px;
+    border-style: inset;
+    font-size: x-large;
+    max-width: fit-content;
+    padding: 1rem;
+    
+    
+}
+
+a {  
+    all: unset;
+    text-decoration: underline;
+}
+
+button {
+    all: unset;
+    background-color: #663635;
+    border-radius: 5px;
+    color: #F9F1F0;
+    cursor: pointer;
+    min-width: 4rem;
+    padding: 0.75rem;
+    text-align:center
+}
+
+
 img {
+    border-radius: 5px;
     max-height: max(40vh,20rem);
     max-width: 90vw;
     object-fit: cover;
 }
 
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
 menu {
     display: flex;
-    gap: 0.24rem;
     flex-wrap: wrap;
+    gap: 0.24rem;
+    justify-content: space-around;
+    max-width: 500px;
     padding: 0.24rem;
-    border: 1px solid;
+    
 }
 
 li {
     list-style: none;
     cursor: pointer;
+}
+
+
+section > button {
+    font-weight: bolder;
+    margin-top: 4rem;
+    padding: 1rem;
+    padding-left: 3.5rem;
+    padding-right: 3.5rem;
+    transform: translateX(min(25vw,10rem))
+    
 }
 
 
