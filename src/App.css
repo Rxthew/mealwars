@@ -49,6 +49,7 @@ main {
 menu {
     display: flex;
     flex-wrap: wrap;
+    gap: 0.24rem;
     justify-content: space-around;
     max-width: 500px;
     padding: 0.24rem;
@@ -59,8 +60,6 @@ li {
     list-style: none;
     cursor: pointer;
     min-width: max-content;
-    margin-left: 0.2rem;
-    margin-right: 0.2rem;
 }
 
 p {
