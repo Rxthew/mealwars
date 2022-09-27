@@ -218,8 +218,8 @@ const MealWrapper = function(): JSX.Element{
                     <h3>Which meal do you prefer?</h3>
                     <h4>First meal to win five rounds wins!</h4>
                 </div>
-                <div className='score'>
-                    <p className='score'>
+                <div>
+                    <p>
                     {score}
                     </p>
                 </div>

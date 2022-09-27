@@ -10,23 +10,6 @@
     
 }
 
-div.score {
-    display: flex;
-    justify-content: center;
-    
-
-}
-
-p.score{
-    background-color: #E1999F;
-    border-radius: 5px;
-    border-style: inset;
-    font-size: x-large;
-    max-width: fit-content;
-    padding: 1rem;
-    
-    
-}
 
 a {  
     all: unset;
@@ -71,6 +54,18 @@ menu {
 li {
     list-style: none;
     cursor: pointer;
+}
+
+p {
+    background-color: #E1999F;
+    border-radius: 5px;
+    border-style: inset;
+    font-size: x-large;
+    margin: 0 auto;
+    max-width: fit-content;
+    padding: 1rem;
+    
+    
 }
 
 
