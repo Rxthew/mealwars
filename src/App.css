@@ -24,7 +24,7 @@ button {
     border-radius: 5px;
     color: #F9F1F0;
     cursor: pointer;
-    min-width: 4rem;
+    min-width: max(4rem,max-content);
     padding: 0.75rem;
     text-align:center
 }
@@ -65,7 +65,7 @@ li {
 p {
     background-color: #E1999F;
     border-radius: 5px;
-    border-style: inset;
+    border-style: solid;
     font-size: x-large;
     margin: 0 auto;
     max-width: fit-content;
