@@ -8,7 +8,7 @@ interface categoryProps {
 }
  
 const CategoryFilter = function(props:categoryProps):JSX.Element{ 
-    let [filter, setFilter] = useState(<li></li>) 
+    let [filter, setFilter] = useState(<aside>Loading...</aside>) 
     
     useEffect(()=>{
         const filterArrayKeys = Object.keys(props.filterObject)
@@ -22,12 +22,21 @@ const CategoryFilter = function(props:categoryProps):JSX.Element{
                 props.filterObject[target.id] === 'yes' ? Object.assign({},props.filterObject,{[target.id] : 'no'}) : Object.assign({},props.filterObject,{[target.id] : 'yes'})
             ) 
         }
-
-        setFilter(
-            <menu onClick={filterItem}> 
-            {filterArrayKeys.map(elem => props.filterObject[elem] === 'yes' ? <li key={genKey()}><button id={elem}>{elem}</button></li> : <li key={genKey()}><button id={elem}><s>{elem}</s></button></li>)}
-            </menu>
-        )
+        if(filterArrayKeys.length > 0){
+            setFilter(
+                <menu onClick={filterItem}> 
+                {filterArrayKeys.map(elem => props.filterObject[elem] === 'yes' ? <li key={genKey()}><button id={elem}>{elem}</button></li> : <li key={genKey()}><button id={elem}><s>{elem}</s></button></li>)}
+                </menu>
+            )
+        }
+        else{
+            setFilter(
+                <aside>
+                    No meal categories available at the moment. Please try refreshing your browser window.
+                </aside>
+            )
+        }
+        
        
            
     },[props])
