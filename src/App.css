@@ -59,6 +59,7 @@ menu {
 li {
     list-style: none;
     cursor: pointer;
+    min-width: max-content;
 }
 
 p {
