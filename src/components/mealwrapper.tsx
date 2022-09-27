@@ -212,23 +212,15 @@ const MealWrapper = function(): JSX.Element{
     }
     return (
         <main>
-            <section>
-                <div>
-                    <h3>Food Categories:</h3>
-                    <h4>Tap on the categories to filter the types of meals you want.</h4>
-                </div>    
-                <CategoryFilter filterObject={typeFilter} setFilterObject={setTypeFilter}/>
-                {warsContent ? false : <button onClick={revealGame}>Done</button>}
-            </section>
             {warsContent ? 
             <section>
                 <div>
                     <h3>Which meal do you prefer?</h3>
                     <h4>First meal to win five rounds wins!</h4>
                 </div>
-                <div>
-                    <p>
-                    Current Score: {score}
+                <div className='score'>
+                    <p className='score'>
+                    {score}
                     </p>
                 </div>
                 <div>
@@ -239,7 +231,15 @@ const MealWrapper = function(): JSX.Element{
                 <h4>Challenger:</h4>
                 {randomCard}
                 </div>        
-            </section> : false}      
+            </section> : false}
+            <section>
+                <div>
+                    <h3>Food Categories:</h3>
+                    <h4>Tap on the categories to filter the types of meals you want.</h4>
+                </div>    
+                <CategoryFilter filterObject={typeFilter} setFilterObject={setTypeFilter}/>
+                {warsContent ? false : <button onClick={revealGame}>Proceed</button>}
+            </section>      
         </main>
     )
 

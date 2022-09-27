@@ -148,7 +148,7 @@ const MealCard = function(props:cardProps):JSX.Element{
                     <ul id={props.id}>
                         <li><img src={mealData.thumb} alt='meal img'/></li>
                         <li>
-                            <a href={mealData.source}>Source</a>
+                            <a href={mealData.source}>Get the Recipe</a>
                         </li>
                     </ul>
                 )
