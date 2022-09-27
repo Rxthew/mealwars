@@ -24,7 +24,6 @@ button {
     border-radius: 5px;
     color: #F9F1F0;
     cursor: pointer;
-    min-width: max(4rem,max-content);
     padding: 0.75rem;
     text-align:center
 }
