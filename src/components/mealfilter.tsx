@@ -24,9 +24,9 @@ const CategoryFilter = function(props:categoryProps):JSX.Element{
         }
         if(filterArrayKeys.length > 0){
             setFilter(
-                <menu onClick={filterItem}> 
+                <ul onClick={filterItem}> 
                 {filterArrayKeys.map(elem => props.filterObject[elem] === 'yes' ? <li key={genKey()}><button id={elem}>{elem}</button></li> : <li key={genKey()}><button id={elem}><s>{elem}</s></button></li>)}
-                </menu>
+                </ul>
             )
         }
         else{

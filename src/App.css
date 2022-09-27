@@ -46,7 +46,7 @@ main {
     gap: 3rem;
 }
 
-menu {
+ul {
     display: flex;
     flex-wrap: wrap;
     gap: 0.24rem;
