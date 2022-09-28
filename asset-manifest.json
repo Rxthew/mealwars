@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/mealwars/static/css/main.b7a996f3.css",
+    "main.css": "/mealwars/static/css/main.3d0c4825.css",
     "main.js": "/mealwars/static/js/main.091cd141.js",
     "index.html": "/mealwars/index.html",
-    "main.b7a996f3.css.map": "/mealwars/static/css/main.b7a996f3.css.map",
+    "main.3d0c4825.css.map": "/mealwars/static/css/main.3d0c4825.css.map",
     "main.091cd141.js.map": "/mealwars/static/js/main.091cd141.js.map"
   },
   "entrypoints": [
-    "static/css/main.b7a996f3.css",
+    "static/css/main.3d0c4825.css",
     "static/js/main.091cd141.js"
   ]
 }
