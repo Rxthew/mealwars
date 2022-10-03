@@ -15,7 +15,7 @@ You are also given the option to customise the types of meals you want to show u
 
 (It is recommened that you do this, unless you fancy having to pick breakfast over dessert)
 
-[Live Demo](https://rxthew/github.io/mealwars)
+[Live Demo](https://rxthew.github.io/mealwars)
 
 
 ## Remarks 
