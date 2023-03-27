@@ -207,6 +207,7 @@ const MealWrapper = function(): JSX.Element{
             <main>
                 <h2>Looks like you have a winner!</h2>
                 {mainCard.props.cardData}
+                <button onClick={() => {window.location.reload()}}>Restart</button>
             </main>
         )
     }
